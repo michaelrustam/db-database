@@ -1,0 +1,44 @@
+- name: Install and secure MariaDB
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+
+  - name: Create a MariaDB repo in remote server
+    copy:
+      src: /database/templates/mariadb.repo
+      dest: /etc/yum.repos.d/mariadb.repo
+
+  - name: Install EPEL release repository for MariaDB
+    yum:
+      name: epel-release
+      state: present
+
+  - name: Install MariaDB server and client
+    yum:
+      name:
+      - MariaDB-server
+      - MariaDB-client
+      state: latest
+
+  - name: Start and enable MariaDB service
+    systemd:
+      name: mariadb
+      state: started
+      enabled: yes
+
+  - name: Install expect
+    package:
+      name: expect
+      state: present
+
+  - name: Upload Expect script to secure MariaDB
+    copy:
+      src: /database/expect.exp
+      dest: /tmp/expect.exp
+      mode: '0755'
+
+  - name: Run Expect script to secure MariaDB
+    shell: /usr/bin/expect /tmp/expect.exp
+    register: result

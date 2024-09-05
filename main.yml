@@ -1,0 +1,8 @@
+- name: Run MariaDB and LAMP stack installation
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+  - import_playbook: mariadb_install.yml
+  - import_playbook: lamp_phpmyadmin.yml

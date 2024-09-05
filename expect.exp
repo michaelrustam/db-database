@@ -1,0 +1,39 @@
+#!/usr/bin/expect -f
+
+# Set timeout for interactions
+set timeout 300
+
+# Define variables for passwords and answers
+set root_password ""
+set new_password "your_new_password"  ;# Change this to the desired root password
+
+# Start the mariadb_secure_installation script
+spawn mariadb_secure_installation
+
+# Expect prompts and provide responses
+expect "Enter current password for root (enter for none):"
+send "$root_password\r"
+
+expect "Set root password? [Y/n]"
+send "Y\r"
+
+expect "New password:"
+send "$new_password\r"
+
+expect "Re-enter new password:"
+send "$new_password\r"
+
+expect "Remove anonymous users? [Y/n]"
+send "Y\r"
+
+expect "Disallow root login remotely? [Y/n]"
+send "Y\r"
+
+expect "Remove test database and access to it? [Y/n]"
+send "Y\r"
+
+expect "Reload privilege tables now? [Y/n]"
+send "Y\r"
+
+# Wait for the end of the script
+expect "All done!"
