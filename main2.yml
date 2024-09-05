@@ -78,7 +78,7 @@
       dest: /etc/httpd/conf.d/phpMyAdmin.conf
 
   - name: Allow HTTPS service through the firewall
-    firewalld:
+    community.general.firewalld:
       service: https
       state: enabled
       permanent: yes
