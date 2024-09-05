@@ -1,4 +1,4 @@
-- name: Install, secure MariaDB, and configure LAMP stack with phpMyAdmin
+- name: Install and secure MariaDB, configure LAMP stack with phpMyAdmin
   hosts: all
   become: yes
   gather_facts: yes
@@ -11,11 +11,12 @@
     - phpmyadmin
 
   tasks:
+
   # MariaDB Installation and Securing
 
   - name: Create a MariaDB repo in remote server
     copy:
-      src: /database/templates/mariadb.repo
+      src: templates/mariadb.repo
       dest: /etc/yum.repos.d/mariadb.repo
 
   - name: Install EPEL release repository
@@ -43,7 +44,7 @@
 
   - name: Upload Expect script to secure MariaDB
     copy:
-      src: /database/expect.exp
+      src: templates/expect.exp
       dest: /tmp/expect.exp
       mode: '0755'
 
@@ -62,18 +63,18 @@
 
   - name: Create my PHP file
     copy:
-      src: /database/templates/my.php
+      src: templates/my.php
       dest: /var/www/html/my.php
       mode: '0755'
 
   - name: Create MySQL configuration file
     template:
-      src: /database/templates/my.cnf
+      src: templates/my.cnf
       dest: /etc/my.cnf
 
   - name: phpMyAdmin config sourcing
     copy:
-      src: /home/database/templates/phpmyadmin.conf
+      src: templates/phpmyadmin.conf
       dest: /etc/httpd/conf.d/phpMyAdmin.conf
 
   - name: Allow HTTPS service through the firewall
