@@ -20,12 +20,12 @@
       dest: /etc/yum.repos.d/mariadb.repo
 
   - name: Install EPEL release repository
-    yum:
+    dnf:
       name: epel-release
       state: present
 
   - name: Install MariaDB server and client
-    yum:
+    dnf:
       name:
       - MariaDB-server
       - MariaDB-client
@@ -38,7 +38,7 @@
       enabled: yes
 
   - name: Install expect
-    package:
+    dnf:
       name: expect
       state: present
 
@@ -55,7 +55,7 @@
   # LAMP Stack and phpMyAdmin Installation
 
   - name: Install necessary packages for LAMP
-    yum:
+    dnf:
       name: "{{ packages }}"
       state: present
     notify:
