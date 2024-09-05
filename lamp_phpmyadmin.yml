@@ -16,7 +16,7 @@
 
   - name: Create a MariaDB repo in remote server
     copy:
-      src: /database/templates/mariadb.repo
+      src: templates/mariadb.repo
       dest: /etc/yum.repos.d/mariadb.repo
 
   - name: Install EPEL release repository for MariaDB
@@ -44,7 +44,7 @@
 
   - name: Upload Expect script to secure MariaDB
     copy:
-      src: /database/expect.exp
+      src: expect.exp
       dest: /tmp/expect.exp
       mode: '0755'
 
@@ -68,18 +68,18 @@
 
   - name: Create my PHP file
     copy:
-      src: /database/templates/my.php
+      src: templates/my.php
       dest: /var/www/html/my.php
       mode: '0755'
 
   - name: Create MySQL configuration file
     template:
-      src: /database/templates/my.cnf
+      src: templates/my.cnf
       dest: /etc/my.cnf
 
   - name: phpMyAdmin config sourcing
     copy:
-      src: /home/database/templates/phpmyadmin.conf
+      src: templates/phpmyadmin.conf
       dest: /etc/httpd/conf.d/phpMyAdmin.conf
 
   - name: Allow HTTPS service through the firewall
