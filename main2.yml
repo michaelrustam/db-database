@@ -1,0 +1,93 @@
+- name: Install, secure MariaDB, and configure LAMP stack with phpMyAdmin
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  vars:
+    packages:
+    - httpd
+    - php
+    - php-mysqlnd
+    - phpmyadmin
+
+  tasks:
+  # MariaDB Installation and Securing
+
+  - name: Create a MariaDB repo in remote server
+    copy:
+      src: /database/templates/mariadb.repo
+      dest: /etc/yum.repos.d/mariadb.repo
+
+  - name: Install EPEL release repository
+    yum:
+      name: epel-release
+      state: present
+
+  - name: Install MariaDB server and client
+    yum:
+      name:
+      - MariaDB-server
+      - MariaDB-client
+      state: latest
+
+  - name: Start and enable MariaDB service
+    systemd:
+      name: mariadb
+      state: started
+      enabled: yes
+
+  - name: Install expect
+    package:
+      name: expect
+      state: present
+
+  - name: Upload Expect script to secure MariaDB
+    copy:
+      src: /database/expect.exp
+      dest: /tmp/expect.exp
+      mode: '0755'
+
+  - name: Run Expect script to secure MariaDB
+    shell: /usr/bin/expect /tmp/expect.exp
+    register: result
+
+  # LAMP Stack and phpMyAdmin Installation
+
+  - name: Install necessary packages for LAMP
+    yum:
+      name: "{{ packages }}"
+      state: present
+    notify:
+    - Start and enable httpd service
+
+  - name: Create my PHP file
+    copy:
+      src: /database/templates/my.php
+      dest: /var/www/html/my.php
+      mode: '0755'
+
+  - name: Create MySQL configuration file
+    template:
+      src: /database/templates/my.cnf
+      dest: /etc/my.cnf
+
+  - name: phpMyAdmin config sourcing
+    copy:
+      src: /home/database/templates/phpmyadmin.conf
+      dest: /etc/httpd/conf.d/phpMyAdmin.conf
+
+  - name: Allow HTTPS service through the firewall
+    firewalld:
+      service: https
+      state: enabled
+      permanent: yes
+
+  - name: Reload firewall to apply changes
+    command: firewall-cmd --reload
+
+  handlers:
+  - name: Start and enable httpd service
+    systemd:
+      name: httpd
+      state: started
+      enabled: yes
